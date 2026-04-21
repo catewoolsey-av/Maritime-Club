@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Neuralink Pitch Deck</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f0f0; }
+    .slide { width: 100%; max-width: 960px; margin: 20px auto; background: white; aspect-ratio: 16/9; padding: 60px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); page-break-after: always; }
+    .slide-title { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; }
+    .slide-title h1 { font-size: 72px; font-weight: 300; margin-bottom: 20px; }
+    .slide-title p { font-size: 28px; opacity: 0.8; }
+    .slide-title .logo { font-size: 24px; position: absolute; bottom: 40px; }
+    h2 { color: #1a1a2e; font-size: 42px; margin-bottom: 40px; }
+    .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .big-stat { font-size: 120px; font-weight: bold; color: #1a1a2e; }
+    .stat-label { font-size: 28px; color: #666; margin-top: 10px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
+    .stat-box { background: #f8f9fa; padding: 30px; border-radius: 12px; text-align: center; }
+    .stat-box .number { font-size: 48px; font-weight: bold; color: #1a1a2e; }
+    .stat-box .label { font-size: 16px; color: #666; margin-top: 10px; }
+    ul { font-size: 24px; line-height: 2; }
+    li { margin: 15px 0; }
+    .highlight { color: #3b82f6; font-weight: 600; }
+    .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .team-member { text-align: center; }
+    .team-member .avatar { width: 80px; height: 80px; background: #1a1a2e; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; }
+    .team-member .name { font-weight: 600; font-size: 16px; }
+    .team-member .role { font-size: 14px; color: #666; }
+    .timeline { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
+    .timeline-item { text-align: center; flex: 1; }
+    .timeline-item .year { font-size: 24px; font-weight: bold; color: #1a1a2e; }
+    .timeline-item .event { font-size: 14px; color: #666; margin-top: 5px; }
+    .timeline-item .dot { width: 20px; height: 20px; background: #3b82f6; border-radius: 50%; margin: 15px auto; }
+    .cta { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; text-align: center; }
+    .cta h2 { color: white; }
+    .cta .amount { font-size: 72px; font-weight: bold; margin: 20px 0; }
+    .footer { font-size: 12px; color: #999; text-align: center; margin-top: auto; padding-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Title -->
+  <div class="slide slide-title" style="position: relative;">
+    <h1>Neuralink</h1>
+    <p>Connecting Humans and Computers</p>
+    <p style="margin-top: 40px; font-size: 20px;">Series D Investment Opportunity | January 2026</p>
+  </div>
+
+  <!-- Slide 2: Problem -->
+  <div class="slide">
+    <h2>The Problem</h2>
+    <div class="slide-content">
+      <div class="grid-3">
+        <div class="stat-box">
+          <div class="number">1B+</div>
+          <div class="label">People with neurological disorders globally</div>
+        </div>
+        <div class="stat-box">
+          <div class="number">5.4M</div>
+          <div class="label">Americans living with paralysis</div>
+        </div>
+        <div class="stat-box">
+          <div class="number">$800B</div>
+          <div class="label">Annual cost of neurological disorders</div>
+        </div>
+      </div>
+      <p style="margin-top: 40px; font-size: 24px; text-align: center; color: #666;">Current treatments are limited. Communication with locked-in patients is nearly impossible.</p>
+    </div>
+  </div>
+
+  <!-- Slide 3: Solution -->
+  <div class="slide">
+    <h2>Our Solution: The Link</h2>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div>
+          <ul>
+            <li><span class="highlight">1,024 electrodes</span> - 100x more than existing devices</li>
+            <li><span class="highlight">Coin-sized implant</span> - Invisible under hair</li>
+            <li><span class="highlight">Wireless charging</span> - No external components</li>
+            <li><span class="highlight">Automated surgery</span> - Precise, safe insertion</li>
+            <li><span class="highlight">Real-time processing</span> - Custom low-power chips</li>
+          </ul>
+        </div>
+        <div style="background: #f0f0f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 120px;">
+          🧠
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: Traction -->
+  <div class="slide">
+    <h2>Traction & Milestones</h2>
+    <div class="slide-content">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="year">2020</div>
+          <div class="dot"></div>
+          <div class="event">Successful pig demonstrations</div>
+        </div>
+        <div class="timeline-item">
+          <div class="year">2023</div>
+          <div class="dot"></div>
+          <div class="event">FDA approval for human trials</div>
+        </div>
+        <div class="timeline-item">
+          <div class="year">2024</div>
+          <div class="dot"></div>
+          <div class="event">First human implant</div>
+        </div>
+        <div class="timeline-item">
+          <div class="year">2025</div>
+          <div class="dot"></div>
+          <div class="event">Expanded trials (10 patients)</div>
+        </div>
+        <div class="timeline-item">
+          <div class="year">2026</div>
+          <div class="dot" style="background: #22c55e;"></div>
+          <div class="event">Commercial approval target</div>
+        </div>
+      </div>
+      <div style="margin-top: 60px; padding: 30px; background: #e8f5e9; border-radius: 12px; text-align: center;">
+        <p style="font-size: 24px;"><strong>First Patient Update:</strong> Successfully controlling computer cursor, playing video games, and browsing the web using only thoughts.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Market -->
+  <div class="slide">
+    <h2>Market Opportunity</h2>
+    <div class="slide-content">
+      <div class="grid-3">
+        <div class="stat-box">
+          <div class="number">$3.7B</div>
+          <div class="label">BCI Market by 2027</div>
+        </div>
+        <div class="stat-box">
+          <div class="number">$15B+</div>
+          <div class="label">Addressable Medical Market</div>
+        </div>
+        <div class="stat-box">
+          <div class="number">$1T+</div>
+          <div class="label">Long-term Enhancement Market</div>
+        </div>
+      </div>
+      <div style="margin-top: 40px;">
+        <p style="font-size: 20px; color: #666;"><strong>Near-term:</strong> Paralysis, ALS, spinal cord injury</p>
+        <p style="font-size: 20px; color: #666; margin-top: 10px;"><strong>Mid-term:</strong> Depression, addiction, blindness, hearing loss</p>
+        <p style="font-size: 20px; color: #666; margin-top: 10px;"><strong>Long-term:</strong> Cognitive enhancement, human-AI symbiosis</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Team -->
+  <div class="slide">
+    <h2>Leadership Team</h2>
+    <div class="slide-content">
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="avatar">EM</div>
+          <div class="name">Elon Musk</div>
+          <div class="role">Founder & Chairman</div>
+        </div>
+        <div class="team-member">
+          <div class="avatar">DJ</div>
+          <div class="name">DJ Seo</div>
+          <div class="role">CEO</div>
+        </div>
+        <div class="team-member">
+          <div class="avatar">MH</div>
+          <div class="name">Dr. Matthew Hoffer</div>
+          <div class="role">Chief Medical Officer</div>
+        </div>
+        <div class="team-member">
+          <div class="avatar">JC</div>
+          <div class="name">Jeremy Chen</div>
+          <div class="role">VP Engineering</div>
+        </div>
+      </div>
+      <div style="margin-top: 40px; text-align: center;">
+        <p style="font-size: 20px; color: #666;">~400 employees including world-class neuroscientists, engineers, and surgeons</p>
+        <p style="font-size: 20px; color: #666; margin-top: 10px;">Team from Stanford, MIT, Tesla, Google, Apple</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Financials -->
+  <div class="slide">
+    <h2>Investment Details</h2>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div>
+          <div class="stat-box" style="margin-bottom: 20px;">
+            <div class="number">$280M</div>
+            <div class="label">Series D Round</div>
+          </div>
+          <div class="stat-box">
+            <div class="number">$5B</div>
+            <div class="label">Post-Money Valuation</div>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom: 20px; color: #1a1a2e;">Use of Proceeds</h3>
+          <ul style="font-size: 18px;">
+            <li>Scale manufacturing capacity</li>
+            <li>Expand clinical trials (100+ patients)</li>
+            <li>Regulatory submissions (FDA, EMA)</li>
+            <li>R&D for next-gen device</li>
+            <li>Commercial preparation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8: CTA -->
+  <div class="slide cta">
+    <h2>Join Us in Connecting Minds</h2>
+    <div class="amount">$2M</div>
+    <p style="font-size: 24px;">Alumni Ventures Allocation</p>
+    <p style="font-size: 18px; margin-top: 30px; opacity: 0.9;">Minimum investment: $25,000 | Deadline: February 15, 2026</p>
+    <div class="footer" style="color: rgba(255,255,255,0.6);">
+      CONFIDENTIAL | For accredited investors only | This is not an offer to sell securities
+    </div>
+  </div>
+
+</body>
+</html>

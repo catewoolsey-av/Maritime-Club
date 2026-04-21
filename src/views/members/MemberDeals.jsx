@@ -221,7 +221,7 @@ const MemberDeals = ({ deals, currentUser }) => {
           .order('created_at', { ascending: false })
           .limit(1)
           .maybeSingle();
-        const clubDisplayName = siteSettingsData?.club_name || 'Green & Granite';
+        const clubDisplayName = siteSettingsData?.club_name || 'Maritime Venture Club';
 
         const emailSubject = `${clubDisplayName} - Deal Interest: ${selectedDeal.company_name} - ${currentUser.full_name}`;
         

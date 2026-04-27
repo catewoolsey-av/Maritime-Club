@@ -37,12 +37,12 @@ const AdminSettings = ({ siteSettings, onRefresh }) => {
     }
   }, [siteSettings]);
 
-  const handleSave = async () => {
+  const persistSettings = async (nextFormData) => {
     setLoading(true);
     setSaveSuccess(false);
     
     try {
-      console.log('Saving settings:', formData);
+      console.log('Saving settings:', nextFormData);
       
       // Always get the first/latest settings row
       const { data: existingSettings } = await supabase
@@ -56,14 +56,14 @@ const AdminSettings = ({ siteSettings, onRefresh }) => {
         // Update existing row
         const { error } = await supabase
           .from('site_settings')
-          .update(formData)
+          .update(nextFormData)
           .eq('id', existingSettings.id);
         if (error) throw error;
       } else {
         // Insert new row if none exists
         const { error } = await supabase
           .from('site_settings')
-          .insert([formData]);
+          .insert([nextFormData]);
         if (error) throw error;
       }
       
@@ -82,6 +82,16 @@ const AdminSettings = ({ siteSettings, onRefresh }) => {
       alert('Error saving settings: ' + err.message);
     }
     setLoading(false);
+  };
+
+  const handleSave = async () => {
+    await persistSettings(formData);
+  };
+
+  const handleEmailTestModeChange = async (email_test_mode) => {
+    const nextFormData = { ...formData, email_test_mode };
+    setFormData(nextFormData);
+    await persistSettings(nextFormData);
   };
 
   const colorPresets = [
@@ -310,7 +320,8 @@ const AdminSettings = ({ siteSettings, onRefresh }) => {
                 </Button>
               ) : (
                 <Button
-                  onClick={() => setFormData({ ...formData, email_test_mode: true })}
+                  onClick={() => handleEmailTestModeChange(true)}
+                  disabled={loading}
                   className="text-sm"
                 >
                   Switch Back to Test Mode
@@ -350,11 +361,11 @@ const AdminSettings = ({ siteSettings, onRefresh }) => {
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button variant="outline" onClick={() => { setShowLiveModeConfirm(false); setLiveModeConfirmText(''); }}>Cancel</Button>
             <Button
-              disabled={liveModeConfirmText !== 'GO LIVE'}
-              onClick={() => {
-                setFormData(prev => ({ ...prev, email_test_mode: false }));
+              disabled={liveModeConfirmText !== 'GO LIVE' || loading}
+              onClick={async () => {
                 setShowLiveModeConfirm(false);
                 setLiveModeConfirmText('');
+                await handleEmailTestModeChange(false);
               }}
               className="bg-red-600 hover:bg-red-700"
             >

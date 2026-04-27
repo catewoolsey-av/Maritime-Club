@@ -64,6 +64,34 @@ export default function App() {
     }
   };
   const [siteSettings, setSiteSettings] = useState(() => getCachedSiteSettings());
+
+  const applySiteSettings = (settings) => {
+    if (!settings) return;
+
+    setSiteSettings(settings);
+    document.documentElement.style.setProperty('--primary-color', settings.primary_color || '#1B4D5C');
+    document.documentElement.style.setProperty('--accent-color', settings.accent_color || '#C9A227');
+    document.documentElement.style.setProperty('--logo-background-color', settings.logo_background_color || '#1B4D5C');
+
+    try {
+      localStorage.setItem('ngvc_site_settings', JSON.stringify(settings));
+    } catch {
+      // ignore storage errors
+    }
+  };
+
+  const refreshSiteSettings = async () => {
+    const { data: settings } = await supabase
+      .from('site_settings')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (settings) {
+      applySiteSettings(settings);
+    }
+  };
   
   // Current user - now based on logged in member, enriched with av_team data if is_manager
   let currentUser = loggedInMember || members[0];
@@ -109,29 +137,7 @@ export default function App() {
 
     // Refresh site settings on startup to avoid stale cached splash colors.
     try {
-      const { data: settings } = await supabase
-        .from('site_settings')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (settings) {
-        setSiteSettings(settings);
-        document.documentElement.style.setProperty('--primary-color', settings.primary_color || '#1B4D5C');
-        document.documentElement.style.setProperty('--accent-color', settings.accent_color || '#C9A227');
-        document.documentElement.style.setProperty('--logo-background-color', settings.logo_background_color || '#1B4D5C');
-        try {
-          localStorage.setItem('ngvc_site_settings', JSON.stringify({
-            primary_color: settings.primary_color || '#1B4D5C',
-            accent_color: settings.accent_color || '#C9A227',
-            logo_background_color: settings.logo_background_color || '#1B4D5C',
-            logo_url: settings.logo_url || '/av-logo.png'
-          }));
-        } catch {
-          // ignore storage errors
-        }
-      }
+      await refreshSiteSettings();
     } catch {
       // ignore settings errors and proceed
     }
@@ -220,7 +226,7 @@ export default function App() {
       if (contentRes.data) setContent(contentRes.data);
       if (investmentsRes.data) setInvestments(investmentsRes.data);
       if (avTeamRes.data) setAvTeam(avTeamRes.data);
-      if (settingsRes.data) setSiteSettings(settingsRes.data);
+      if (settingsRes.data) applySiteSettings(settingsRes.data);
     } catch (err) {
       console.error('Error fetching data:', err);
     }
@@ -293,6 +299,27 @@ export default function App() {
   useEffect(() => {
     fetchData();
     checkExistingSessions();
+  }, []);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('site-settings-sync')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'site_settings'
+        },
+        () => {
+          refreshSiteSettings();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {

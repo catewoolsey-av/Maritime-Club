@@ -207,7 +207,7 @@ export const MemberLogin = ({ onLogin, members }) => {
       <Card className="w-full max-w-md">
         <div className="text-center mb-6">
           <img src="/av-logo.png" alt="AV logo" className="w-16 h-16 mx-auto mb-4 object-contain" />
-          <h1 className="text-2xl font-bold text-gray-900">Welcome to Maritime</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Welcome to the<br />Maritime</h1>
           <p className="text-gray-500 mt-1">Invest in the Infrastructure Powering Global Trade</p>
         </div>
         

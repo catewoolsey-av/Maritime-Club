@@ -76,7 +76,7 @@ export default async (req) => {
     if (action === 'listSourceDeals') {
       const { data, error } = await sb2
         .from('deals')
-        .select('id, name, company_name, company_url, headline, deck_url, deal_status, stage, created_at, deadline_at')
+        .select('id, name, company_name, company_url, headline, deck_url, deal_status, stage, created_at, deadline_at, is_uk')
         .order('created_at', { ascending: true });
       if (error) throw error;
       return json(200, { deals: data || [] });

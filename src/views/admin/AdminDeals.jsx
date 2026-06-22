@@ -707,6 +707,11 @@ const AdminDeals = ({ deals, onRefresh }) => {
                             {deal.stage}
                           </span>
                         )}
+                        {deal.is_uk && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium flex-shrink-0 bg-blue-100 text-blue-700">
+                            UK Version
+                          </span>
+                        )}
                       </div>
                       {deal.headline && (
                         <p className="text-xs text-gray-500 truncate mt-0.5">{deal.headline}</p>

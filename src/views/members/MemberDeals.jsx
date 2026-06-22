@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, FileText, AlertCircle, Eye, Link2, Check } from 'lucide-react';
 import { supabase, callDealRoomMember } from '../../supabase';
 import { formatDate } from '../../utils/formatters';
+import { formatDealDescription } from '../../utils/formatDealDescription';
 import { Button, Card, Badge, Modal, DocumentModal, VideoModal } from '../../components/ui';
 
 const MemberDeals = ({ deals, currentUser }) => {
@@ -648,11 +649,10 @@ const MemberDeals = ({ deals, currentUser }) => {
                     <div className="flex-1 flex flex-col">
                       <div className="border-l-[3px] border-blue-600 pl-4 mt-5">
                         <h3 className="text-base font-bold text-gray-900 mb-3 tracking-tight">Investment Opportunity</h3>
-                        <div className="text-sm text-gray-700 leading-relaxed space-y-3.5">
-                          {deal.description.split('\n\n').map((paragraph, idx) => (
-                            <p key={idx} className="whitespace-pre-line">{paragraph}</p>
-                          ))}
-                        </div>
+                        <div
+                          className="text-sm text-gray-700 leading-relaxed"
+                          dangerouslySetInnerHTML={{ __html: formatDealDescription(deal.description) }}
+                        />
                       </div>
                     </div>
                   )}

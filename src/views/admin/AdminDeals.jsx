@@ -3,6 +3,7 @@ import { Plus, Trash2, FileText, ExternalLink, CheckCircle, Mail, AlertCircle, C
 import { supabase, callDealRoomAdmin } from '../../supabase';
 import { Button, Card, Modal } from '../../components/ui';
 import { sendDealPostedEmail, sendDealActiveEmail, isEmailTestMode, CATE_EMAIL } from '../../utils/emailNotifications';
+import { formatDealDescription } from '../../utils/formatDealDescription';
 
 const AdminDeals = ({ deals, onRefresh }) => {
   // Add deal picker state
@@ -525,7 +526,10 @@ const AdminDeals = ({ deals, onRefresh }) => {
                       return (
                         <div className="mb-5">
                           <p className="text-xs text-gray-500 mb-1">Description</p>
-                          <p className="text-sm text-gray-700 leading-relaxed">{text}</p>
+                          <div
+                            className="text-sm text-gray-700 leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: formatDealDescription(text) }}
+                          />
                         </div>
                       );
                     })()}

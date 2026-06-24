@@ -10,13 +10,14 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { to, subject, text, html } = JSON.parse(event.body);
+    const { to, bcc, subject, text, html } = JSON.parse(event.body);
 
-    // Validate inputs
-    if (!to || !subject || (!text && !html)) {
+    // Validate inputs. Either `to` or `bcc` must be present — group sends use
+    // bcc so recipients can't see each other's addresses.
+    if ((!to && !bcc) || !subject || (!text && !html)) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Missing required fields: to, subject, and text/html' })
+        body: JSON.stringify({ error: 'Missing required fields: to or bcc, subject, and text/html' })
       };
     }
 
@@ -48,12 +49,19 @@ exports.handler = async (event, context) => {
       }
     });
 
-    console.log('Attempting to send email to:', to);
+    const fromAddr = process.env.SMTP_FROM || process.env.SMTP_USER;
+    const joinAddrs = (v) => (Array.isArray(v) ? v.join(', ') : v);
+    // When a send only supplies bcc (group blast), put the club's own sending
+    // address in the visible To so recipients see the club, not each other.
+    const toField = to ? joinAddrs(to) : fromAddr;
+
+    console.log('Attempting to send email', { to: toField, bccCount: Array.isArray(bcc) ? bcc.length : bcc ? 1 : 0 });
 
     // Send email
     const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM || process.env.SMTP_USER,
-      to: Array.isArray(to) ? to.join(', ') : to,
+      from: fromAddr,
+      to: toField,
+      ...(bcc ? { bcc: joinAddrs(bcc) } : {}),
       subject: subject,
       text: text,
       html: html || text

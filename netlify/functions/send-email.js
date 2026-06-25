@@ -10,14 +10,15 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { to, bcc, subject, text, html } = JSON.parse(event.body);
+    const { to, recipients, subject, text, html } = JSON.parse(event.body);
 
-    // Validate inputs. Either `to` or `bcc` must be present — group sends use
-    // bcc so recipients can't see each other's addresses.
-    if ((!to && !bcc) || !subject || (!text && !html)) {
+    // Validate inputs. Either `to` (single/direct send) or `recipients` (a
+    // group send — one individual email per address) must be present.
+    const recipientList = Array.isArray(recipients) ? recipients.filter(Boolean) : [];
+    if ((!to && recipientList.length === 0) || !subject || (!text && !html)) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Missing required fields: to or bcc, subject, and text/html' })
+        body: JSON.stringify({ error: 'Missing required fields: to or recipients, subject, and text/html' })
       };
     }
 
@@ -50,18 +51,40 @@ exports.handler = async (event, context) => {
     });
 
     const fromAddr = process.env.SMTP_FROM || process.env.SMTP_USER;
-    const joinAddrs = (v) => (Array.isArray(v) ? v.join(', ') : v);
-    // When a send only supplies bcc (group blast), put the club's own sending
-    // address in the visible To so recipients see the club, not each other.
-    const toField = to ? joinAddrs(to) : fromAddr;
 
-    console.log('Attempting to send email', { to: toField, bccCount: Array.isArray(bcc) ? bcc.length : bcc ? 1 : 0 });
+    // Group send: deliver ONE personalised email per recipient, each addressed
+    // only to that person. Keeps the cohort private (no one sees anyone else)
+    // AND shows each member their own address in the To line. Sent in small
+    // concurrent batches to stay well under the function timeout without
+    // hammering the SMTP server with one connection per recipient.
+    if (recipientList.length > 0) {
+      console.log('Group send: individual emails to', recipientList.length, 'recipients');
+      const BATCH = 5;
+      let sent = 0;
+      const failures = [];
+      for (let i = 0; i < recipientList.length; i += BATCH) {
+        const batch = recipientList.slice(i, i + BATCH);
+        const results = await Promise.allSettled(batch.map((addr) =>
+          transporter.sendMail({ from: fromAddr, to: addr, subject, text, html: html || text })
+        ));
+        results.forEach((r, idx) => {
+          if (r.status === 'fulfilled') sent++;
+          else failures.push({ to: batch[idx], error: r.reason?.message || String(r.reason) });
+        });
+      }
+      console.log(`Group send complete: ${sent} sent, ${failures.length} failed`);
+      return {
+        statusCode: failures.length && sent === 0 ? 500 : 200,
+        body: JSON.stringify({ success: sent > 0, sent, failed: failures.length, failures })
+      };
+    }
 
-    // Send email
+    // Single / direct send (deal reminders, AV-staff notifications) — unchanged.
+    const toField = Array.isArray(to) ? to.join(', ') : to;
+    console.log('Attempting to send email to:', toField);
     const info = await transporter.sendMail({
       from: fromAddr,
       to: toField,
-      ...(bcc ? { bcc: joinAddrs(bcc) } : {}),
       subject: subject,
       text: text,
       html: html || text

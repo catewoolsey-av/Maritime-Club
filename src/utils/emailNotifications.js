@@ -72,12 +72,12 @@ export async function getNotificationRecipients() {
 /**
  * Send an email notification via the Netlify function.
  */
-export async function sendNotificationEmail({ to, bcc, subject, html, text }) {
+export async function sendNotificationEmail({ to, recipients, subject, html, text }) {
   try {
     const response = await fetch('/.netlify/functions/send-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to, bcc, subject, html, text }),
+      body: JSON.stringify({ to, recipients, subject, html, text }),
     });
 
     const result = await response.json();
@@ -144,7 +144,7 @@ export async function sendAnnouncementEmail({ title, content, author }) {
   });
 
   return sendNotificationEmail({
-    bcc: recipients,
+    recipients,
     subject: `${brand.name} - New Announcement: ${title}`,
     html,
     text: `${brand.name} - New Announcement: ${title}\n\n${content}\n\nPosted by ${author || 'Admin'}\n\nView in portal: ${portalUrl}`,
@@ -179,7 +179,7 @@ export async function sendDealPostedEmail({ companyName, headline, sector, stage
   });
 
   return sendNotificationEmail({
-    bcc: recipients,
+    recipients,
     subject: `${brand.name} - New Deal: ${companyName}`,
     html,
     text: `${brand.name} - New Deal: ${companyName}\n${headline || ''}\nSector: ${sector || 'N/A'}\nStage: ${stage || 'N/A'}\n\nA new deal has been posted to the portal. Log in to view the full details.\n\n${portalUrl}`,
@@ -219,7 +219,7 @@ export async function sendDealActiveEmail({ companyName, headline, sector, stage
   });
 
   return sendNotificationEmail({
-    bcc: recipients,
+    recipients,
     subject: `${brand.name} - Deal Now Active: ${companyName}`,
     html,
     text: `${brand.name} - Deal Now Active: ${companyName}\n${headline || ''}\nSector: ${sector || 'N/A'}\nStage: ${stage || 'N/A'}\n${raiseAmount ? `Raise: ${raiseAmount}\n` : ''}${deadline ? `Deadline: ${deadline}\n` : ''}\nThis deal is now active and open for investment.\n\n${portalUrl}`,

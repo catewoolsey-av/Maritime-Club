@@ -115,7 +115,7 @@ export const MemberLogin = ({ onLogin, members }) => {
         .from('members')
         .select('*')
         .eq('auth_user_id', authData.user.id)
-        .single();
+        .maybeSingle();
       
       if (memberError || !member) {
         setError('Member record not found. Please contact your administrator.');

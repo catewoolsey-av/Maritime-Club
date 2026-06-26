@@ -3,7 +3,23 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// This portal does not use the Supabase auth session for app state — identity
+// comes from the member_sessions table and data reads use the anon key. The
+// auth session is only used transiently at login (signInWithPassword) and the
+// password-change updateUser call, both within a single page load.
+//
+// Persisting it (the default) left a stale, expired session in localStorage
+// whose background autoRefreshToken contended the supabase-js auth Web Lock
+// with signInWithPassword — intermittently hanging login until a hard refresh.
+// Disabling persistence / auto-refresh / URL detection removes that contention
+// while leaving the in-memory session available for the immediate updateUser.
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false,
+  },
+})
 
 // Maps this portal to its row in SB2 public.clubs. Used to scope dr_responses
 // (and meeting mirrors) by club so a member's decision in one club doesn't

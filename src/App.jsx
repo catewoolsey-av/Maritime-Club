@@ -155,14 +155,17 @@ export default function App() {
         .maybeSingle();
       
       if (memberSession) {
-        // Idle expiry: if the device has sat inactive past the limit, sign out
-        // (drop the session) instead of restoring it.
+        // Drop (don't restore) the session if it sat idle past the limit OR if
+        // "remember me" was off — the row only exists to authenticate deal-room
+        // calls during that session, not to persist across reloads.
+        const remembered = (() => { try { return localStorage.getItem('ngvc_member_remember') !== 'false'; } catch { return true; } })();
         const lastActive = Number(localStorage.getItem('ngvc_last_active') || 0);
         const idleExpired = lastActive && (Date.now() - lastActive > IDLE_LIMIT_MS);
-        if (idleExpired) {
+        const dropSession = !remembered || idleExpired;
+        if (dropSession) {
           await supabase.from('member_sessions').delete().eq('device_id', deviceId);
         }
-        const { data: member } = idleExpired ? { data: null } : await supabase
+        const { data: member } = dropSession ? { data: null } : await supabase
           .from('members')
           .select('*')
           .eq('id', memberSession.member_id)
@@ -402,21 +405,21 @@ export default function App() {
     setCurrentView('dashboard');
     setIsAdmin(false); // Always start in member mode
     
-    if (remember) {
-      const deviceId = getDeviceId();
-      try {
-        // Clear any existing session for this device
-        await supabase.from('member_sessions').delete().eq('device_id', deviceId);
-        
-        // Create new session
-        await supabase.from('member_sessions').insert([{
-          member_id: member.id,
-          device_id: deviceId,
-          is_active: true,
-        }]);
-      } catch (err) {
-        console.error('Error saving member session:', err);
-      }
+    // Always create the session row — the deal-room functions authenticate the
+    // caller against it server-side, so it must exist even when "remember me"
+    // is off. `remember` only gates auto-restore on the next load (stored here).
+    try { localStorage.setItem('ngvc_member_remember', remember ? 'true' : 'false'); } catch {}
+    const deviceId = getDeviceId();
+    try {
+      // Clear any existing session for this device, then create a fresh one
+      await supabase.from('member_sessions').delete().eq('device_id', deviceId);
+      await supabase.from('member_sessions').insert([{
+        member_id: member.id,
+        device_id: deviceId,
+        is_active: true,
+      }]);
+    } catch (err) {
+      console.error('Error saving member session:', err);
     }
   };
   
